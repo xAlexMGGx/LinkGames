@@ -1,0 +1,14 @@
+[[pages]]
+path = "pages/time_register.py"
+name = "Registro de tiempos"
+icon = "⏱️"
+
+[[pages]]
+path = "pages/global_results.py"
+name = "Clasificación general"
+icon = "🏆"
+
+[[pages]]
+path = "pages/month_results.py"
+name = "Resultados del mes"
+icon = "📅"
