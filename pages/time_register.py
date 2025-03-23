@@ -1,6 +1,12 @@
 import streamlit as st
 from datetime import datetime
-from utils import load_data, update_data, parse_time, update_results
+from utils import (
+    load_data,
+    update_data,
+    parse_time,
+    update_month_results,
+    update_global_results,
+)
 from pytz import timezone
 
 
@@ -23,7 +29,7 @@ pinpoint = st.checkbox("Adivinó la categoría en Pinpoint?")
 submit = st.button("Registrar")
 
 california_tz = timezone("America/Los_Angeles")
-current_date = str(datetime.now().astimezone(california_tz).date())
+current_date = datetime.now().astimezone(california_tz).date()
 
 if submit and player:
     times = {"queens": queens, "tango": tango, "zip": zip, "cross": cross}
@@ -46,7 +52,7 @@ if submit and player:
             "zip": times["zip"],
             "cross": times["cross"],
             "pinpoint": "Yes" if pinpoint else "No",
-            "timestamp": current_date,
+            "timestamp": str(current_date),
         }
         update_data(DATA_FILE, new_data, player)
         st.success("Registro guardado correctamente!")
@@ -56,9 +62,12 @@ st.subheader("Registros de hoy")
 data = load_data(DATA_FILE)
 if len(data["timestamp"]) != 0:
     last_date = list(data["timestamp"].values())[0]
+    last_date = datetime.strptime(last_date, "%Y-%m-%d").date()
     if last_date != current_date:
-        update_results()
+        update_month_results()
         data = load_data(DATA_FILE)
+        if last_date.month != current_date.month:
+            update_global_results()
 
 n_rows = len(data["Queens 👑"])
 if n_rows > 0:

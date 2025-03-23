@@ -2,7 +2,7 @@ import json
 import re
 
 
-def reset_data(filename):
+def reset_day_data(filename):
     """
     Reset JSON data.
 
@@ -17,6 +17,25 @@ def reset_data(filename):
         "Zip 🐍": {},
         "timestamp": {},
     }
+    save_data(filename, data)
+
+
+def reset_month_data(filename):
+    """
+    Reset JSON data for the current month.
+
+    args:
+        - filename (str): JSON filename
+    """
+    games = [
+        "Queens \ud83d\udc51",
+        "Tango \ud83d\udd35\ud83d\udfe0",
+        "Pinpoint \ud83d\udfe6",
+        "Cross \ud83e\uddd7",
+        "Zip \ud83d\udc0d",
+    ]
+    players = ["Alex", "Jorge", "Mazu", "Galo", "Priti"]
+    data = {game: {player: "" for player in players} for game in games}
     save_data(filename, data)
 
 
@@ -37,7 +56,7 @@ def load_data(filename: str):
     except FileNotFoundError:
         return {}
     except json.JSONDecodeError:
-        reset_data(filename)
+        reset_day_data(filename)
         return data
 
 
@@ -99,25 +118,25 @@ def parse_time(time_str):
         return None
 
 
-def update_results():
+def update_month_results():
     """
     Update monthly results and reset today's results.
     """
     month_path = "data/month_results.json"
     data = load_data(month_path)
 
-    winners = get_winners()
+    winners = get_day_winners()
 
     for game, players in winners.items():
         n_winners = len(players)
         for player in players:
             if game == "pinpoint":
-                data = update_score(data, player, game, 1)
+                data = update_month_score(data, player, game, 1)
             else:
-                data = update_score(data, player, game, 1 / n_winners)
+                data = update_month_score(data, player, game, 1 / n_winners)
 
     save_data(month_path, data)
-    reset_data("data/today_results.json")
+    reset_day_data("data/today_results.json")
 
 
 def sort_cell(cell):
@@ -142,7 +161,7 @@ def sort_cell(cell):
     return sorted_cell
 
 
-def update_score(data: dict, player: int, game: str, score: float | int):
+def update_month_score(data: dict, player: int, game: str, score: float | int):
     """
     Update the score in the data.
 
@@ -185,7 +204,7 @@ def update_score(data: dict, player: int, game: str, score: float | int):
     return data
 
 
-def get_winners():
+def get_day_winners():
     """
     Returns winners for each game
 
@@ -222,3 +241,92 @@ def get_winners():
                     results[game].append(name)
 
     return results
+
+
+def update_global_results():
+    """
+    Update global results and reset months's results.
+    """
+    global_path = "data/global_results.json"
+    data = load_data(global_path)
+
+    winners = get_month_winners()
+
+    for game, players in winners.items():
+        n_winners = len(players)
+        for player in players:
+            data = update_global_score(data, player, game, n_winners)
+
+    save_data(global_path, data)
+    reset_month_data("data/month_results.json")
+
+
+def update_global_score(data: dict, player: str, game: str, n_winners: int):
+    """
+    Update global score in the data.
+
+    args:
+        - data (dict): Data dictionary
+        - player (str): Player name
+        - game (str): Game name
+        - n_winners (int): Number of winners
+
+    Returns:
+        - data (dict): Updated data dictionary
+    """
+    curr_score = data[game][player]
+    if n_winners == 1:
+        data[game][player] = str(int(curr_score) + 1)
+    else:
+        data[game][player] = curr_score + "?"
+
+    return data
+
+
+def get_month_winners():
+    """
+    Returns winners for each game in the month
+
+    Returns:
+        - results (dict): Dictionary with game names as keys and lists of winners as values
+    """
+    month_path = "data/month_results.json"
+    month_results = load_data(month_path)
+
+    results = {
+        "Queens 👑": [],
+        "Tango 🔵🟠": [],
+        "Pinpoint 🟦": [],
+        "Cross 🧗": [],
+        "Zip 🐍": [],
+    }
+
+    for game in month_results.keys():
+        game: str
+        best_score = -1
+        for name, score in month_results[game].items():
+            score = convert_result(score)
+            if score > best_score:
+                best_score = score
+                results[game] = [name]
+            elif score == best_score:
+                results[game].append(name)
+
+    return results
+
+
+def convert_result(text_result: str):
+    """
+    Converter for the text result to number result.
+    """
+    convert_values = {
+        "5": 5,
+        "I": 1,
+        "i": 0.5,
+        ".": 1 / 3,
+    }
+    result = 0
+    for char in text_result:
+        result += convert_values[char]
+
+    return result
