@@ -6,6 +6,7 @@ from utils import (
     parse_time,
     update_month_results,
     update_global_results,
+    check_tie_breakers,
 )
 from pytz import timezone
 
@@ -64,10 +65,11 @@ if len(data["timestamp"]) != 0:
     last_date = list(data["timestamp"].values())[0]
     last_date = datetime.strptime(last_date, "%Y-%m-%d").date()
     if last_date != current_date:
+        check_tie_breakers()
         update_month_results()
-        data = load_data(DATA_FILE)
-        if last_date.month != current_date.month:
+        if current_date.day == 1:
             update_global_results()
+        data = load_data(DATA_FILE)
 
 n_rows = len(data["Queens 👑"])
 if n_rows > 0:

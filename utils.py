@@ -204,9 +204,12 @@ def update_month_score(data: dict, player: int, game: str, score: float | int):
     return data
 
 
-def get_day_winners():
+def get_day_winners(players: list[str] = None, check_game: str = None):
     """
     Returns winners for each game
+
+    args:
+        - players (list[str]): List of players to consider for the winners
 
     Returns:
         - results (dict): Dictionary with game names as keys and lists of winners as values
@@ -222,13 +225,19 @@ def get_day_winners():
         "Zip 🐍": [],
     }
 
+    if players is None:
+        players = list(today_results["Queens 👑"].keys())
+
     for game in today_results.keys():
         game: str
-        if game == "timestamp":
+        if check_game is not None and game != check_game:
+            continue
+        elif game == "timestamp":
             continue
         elif game.split(" ")[0].lower() != "pinpoint":
             best_score = 1000
-            for name, score in today_results[game].items():
+            for name in players:
+                score = today_results[game][name]
                 score = parse_time(score)
                 if score < best_score:
                     best_score = score
@@ -236,7 +245,8 @@ def get_day_winners():
                 elif score == best_score:
                     results[game].append(name)
         else:
-            for name, score in today_results[game].items():
+            for name in players:
+                score = today_results[game][name]
                 if score == "Yes":
                     results[game].append(name)
 
@@ -319,14 +329,40 @@ def convert_result(text_result: str):
     """
     Converter for the text result to number result.
     """
-    convert_values = {
-        "5": 5,
-        "I": 1,
-        "i": 0.5,
-        ".": 1 / 3,
-    }
+    convert_values = {"5": 5, "I": 1, "i": 0.5, ".": 1 / 3, "0": 0}
     result = 0
     for char in text_result:
         result += convert_values[char]
 
     return result
+
+
+def check_tie_breakers():
+    """
+    Check for tie breakers and update the global results accordingly.
+    """
+    global_path = "data/global_results.json"
+    global_data = load_data(global_path)
+
+    tied_results = {}
+    for game in global_data.keys():
+        for player, score in global_data[game].items():
+            if re.findall("\?", score):
+                if game not in tied_results:
+                    tied_results[game] = [player]
+                else:
+                    tied_results[game].append(player)
+
+    for game in tied_results.keys():
+        for player in tied_results[game]:
+            global_data[game][player] = global_data[game][player].replace(
+                "?", ""
+            )
+        winners = get_day_winners(tied_results[game], game)
+        n_winners = len(winners[game])
+        for winner in winners[game]:
+            global_data = update_global_score(
+                global_data, winner, game, n_winners
+            )
+    #### NO QUITA LA ?
+    save_data(global_path, global_data)
