@@ -1,37 +1,37 @@
 {
     "Queens \ud83d\udc51": {
-        "Alex": "..",
-        "Jorge": "..",
-        "Mazu": "",
-        "Galo": "..",
-        "Priti": ""
+        "Alex": "5IIIi",
+        "Jorge": "IIII",
+        "Mazu": "5IIi",
+        "Galo": "Ii",
+        "Priti": "Ii"
     },
     "Tango \ud83d\udd35\ud83d\udfe0": {
-        "Alex": "..",
-        "Jorge": "..",
-        "Mazu": "",
-        "Galo": "..",
-        "Priti": ""
+        "Alex": "55Ii",
+        "Jorge": "II",
+        "Mazu": "IIII",
+        "Galo": "I",
+        "Priti": "IIIIi"
     },
     "Pinpoint \ud83d\udfe6": {
-        "Alex": "",
-        "Jorge": "",
-        "Mazu": "",
-        "Galo": "",
-        "Priti": ""
+        "Alex": "5",
+        "Jorge": "IIII",
+        "Mazu": "II",
+        "Galo": "IIII",
+        "Priti": "II"
     },
     "Cross \ud83e\uddd7": {
-        "Alex": "I",
-        "Jorge": "i",
+        "Alex": "5Ii",
+        "Jorge": "5IIi",
         "Mazu": "",
-        "Galo": "i",
-        "Priti": ""
+        "Galo": "II",
+        "Priti": "5II"
     },
     "Zip \ud83d\udc0d": {
-        "Alex": "..",
-        "Jorge": "..",
+        "Alex": "II",
+        "Jorge": "I",
         "Mazu": "",
-        "Galo": "..",
-        "Priti": ""
+        "Galo": "Ii",
+        "Priti": "Ii"
     }
 }
