@@ -1,0 +1,37 @@
+{
+    "Queens \ud83d\udc51": {
+        "Alex": "0",
+        "Jorge": "0",
+        "Mazu": "0",
+        "Galo": "1",
+        "Priti": "0"
+    },
+    "Tango \ud83d\udd35\ud83d\udfe0": {
+        "Alex": "0",
+        "Jorge": "0",
+        "Mazu": "0",
+        "Galo": "1",
+        "Priti": "0"
+    },
+    "Pinpoint \ud83d\udfe6": {
+        "Alex": "0",
+        "Jorge": "0",
+        "Mazu": "0",
+        "Galo": "1",
+        "Priti": "0"
+    },
+    "Cross \ud83e\uddd7": {
+        "Alex": "0",
+        "Jorge": "1",
+        "Mazu": "0",
+        "Galo": "0",
+        "Priti": "0"
+    },
+    "Zip \ud83d\udc0d": {
+        "Alex": "0",
+        "Jorge": "0",
+        "Mazu": "0",
+        "Galo": "1",
+        "Priti": "0"
+    }
+}
