@@ -202,20 +202,20 @@ def update_month_score(data: dict, player: int, game: str, score: float | int):
     cell: str = data[game][player]
     if score == 1 / 3:
         cell += "."
-        num_chars = len(re.findall("\.", cell))
+        num_chars = len(re.findall(r"\.", cell))
         if num_chars % 3 == 0:
             cell = cell.replace(".", "")
             cell += "I" * (num_chars // 3)
     elif score == 1 / 2:
         cell += "i"
-        num_chars = len(re.findall("i", cell))
+        num_chars = len(re.findall(r"i", cell))
         if num_chars % 2 == 0:
             cell = cell.replace("i", "")
             cell += "I" * (num_chars // 2)
     else:
         cell += "I"
 
-    num_chars = len(re.findall("I", cell))
+    num_chars = len(re.findall(r"I", cell))
     if num_chars % 5 == 0:
         cell = cell.replace("I", "")
         cell += "5" * (num_chars // 5)
@@ -367,7 +367,7 @@ def check_tie_breakers():
     tied_results = {}
     for game in global_data.keys():
         for player, score in global_data[game].items():
-            if re.findall("\?", score):
+            if re.findall(r"\?", score):
                 if game not in tied_results:
                     tied_results[game] = [player]
                 else:
