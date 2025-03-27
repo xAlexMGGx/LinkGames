@@ -35,7 +35,6 @@ def load_data(filename: str):
     """
     url = GIST_URL + str(GISTS_IDS[filename])
     response = requests.get(url, headers=HEADERS)
-    pprint(response.json())
     if response.status_code == 200:
         return json.loads(response.json()["files"][filename]["content"])
     else:
