@@ -3,6 +3,7 @@ import re
 import streamlit as st
 import requests
 
+from pprint import pprint
 
 # File paths
 TODAY_PATH = "today_results.json"
@@ -34,6 +35,7 @@ def load_data(filename: str):
     """
     url = GIST_URL + str(GISTS_IDS[filename])
     response = requests.get(url, headers=HEADERS)
+    pprint(response.json())
     if response.status_code == 200:
         return json.loads(response.json()["files"][filename]["content"])
     else:

@@ -61,8 +61,6 @@ if submit and player:
 # Mostrar registros existentes
 st.subheader("Registros de hoy")
 data = load_data(TODAY_PATH)
-st.write(data)
-print("Data loaded ####################")
 if len(data["timestamp"]) != 0:
     last_date = list(data["timestamp"].values())[0]
     last_date = datetime.strptime(last_date, "%Y-%m-%d").date()
