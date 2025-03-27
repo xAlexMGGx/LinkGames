@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
+from utils import load_data
 
 # Load dataset
-with open("./data/global_results.json", "rb") as f:
-    data = pd.read_json(f)
+GLOBAL_PATH = "global_results.json"
+data = load_data(GLOBAL_PATH)
 
 # Create dataframe
 df = pd.DataFrame(data)

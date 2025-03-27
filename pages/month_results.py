@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
+from utils import load_data
 
 # Load dataset
-with open("./data/month_results.json", "rb") as f:
-    data = pd.read_json(f)
+MONTH_PATH = "month_results.json"
+data = load_data(MONTH_PATH)
 
 # Create dataframe
 df = pd.DataFrame(data)

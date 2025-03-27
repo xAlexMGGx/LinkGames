@@ -159,7 +159,7 @@ def update_month_results():
                 data = update_month_score(data, player, game, 1 / n_winners)
 
     save_data(MONTH_PATH, data)
-    reset_day_data("data/today_results.json")
+    reset_day_data(TODAY_PATH)
 
 
 def sort_cell(cell):
@@ -289,7 +289,7 @@ def update_global_results():
             data = update_global_score(data, player, game, n_winners)
 
     save_data(GLOBAL_PATH, data)
-    reset_month_data("data/month_results.json")
+    reset_month_data(MONTH_PATH)
 
 
 def update_global_score(data: dict, player: str, game: str, n_winners: int):

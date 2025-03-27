@@ -12,7 +12,7 @@ from pytz import timezone
 
 
 # Archivo donde se guardarán los datos
-DATA_FILE = "./data/today_results.json"
+TODAY_PATH = "today_results.json"
 
 
 # Formulario de entrada
@@ -55,12 +55,12 @@ if submit and player:
             "pinpoint": "Yes" if pinpoint else "No",
             "timestamp": str(current_date),
         }
-        update_data(DATA_FILE, new_data, player)
+        update_data(TODAY_PATH, new_data, player)
         st.success("Registro guardado correctamente!")
 
 # Mostrar registros existentes
 st.subheader("Registros de hoy")
-data = load_data(DATA_FILE)
+data = load_data(TODAY_PATH)
 if len(data["timestamp"]) != 0:
     last_date = list(data["timestamp"].values())[0]
     last_date = datetime.strptime(last_date, "%Y-%m-%d").date()
@@ -69,7 +69,7 @@ if len(data["timestamp"]) != 0:
         update_month_results()
         if current_date.day == 1:
             update_global_results()
-        data = load_data(DATA_FILE)
+        data = load_data(TODAY_PATH)
 
 n_rows = len(data["Queens 👑"])
 if n_rows > 0:
