@@ -173,5 +173,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Folders
+# Private folders and files
 data/
+.streamlit/secrets.toml

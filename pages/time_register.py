@@ -59,7 +59,7 @@ if submit and player:
         st.success("Registro guardado correctamente!")
 
 # Mostrar registros existentes
-st.subheader("Registros de hoy")
+st.subheader(f"Registros de hoy {str(current_date)}")
 data = load_data(TODAY_PATH)
 if len(data["timestamp"]) != 0:
     last_date = list(data["timestamp"].values())[0]
