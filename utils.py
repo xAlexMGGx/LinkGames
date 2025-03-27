@@ -1,5 +1,52 @@
 import json
 import re
+import streamlit as st
+import requests
+
+
+GISTS_IDS = {
+    "today_results.json": st.secrets["TODAY_GIST_ID"],
+    "month_results.json": st.secrets["MONTH_GIST_ID"],
+    "global_results.json": st.secrets["GLOBAL_GIST_ID"]
+}
+GIST_URL = "https://api.github.com/gists/"
+GITHUB_TOKEN = st.secrets["GISTS_API_TOKEN"]
+
+# GitHub API endpoints
+HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
+
+# File paths
+TODAY_PATH = "today_results.json"
+MONTH_PATH = "month_results.json"
+GLOBAL_PATH = "global_results.json"
+
+def load_data(filename: str):
+    """Fetch JSON data from the GitHub Gist"""
+    url = GIST_URL + f"{GISTS_IDS[filename]}"
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code == 200:
+        return json.loads(response.json()["files"][filename]["content"])
+    else:
+        st.error("Failed to load data.")
+        return {}
+    
+
+def save_data(filename, new_data):
+    """Update the JSON data in the GitHub Gist"""
+    updated_content = json.dumps(new_data, indent=4)
+    payload = {
+        "files": {
+            filename: {
+                "content": updated_content
+            }
+        }
+    }
+    url = GIST_URL + f"{GISTS_IDS[filename]}"
+    response = requests.patch(url, headers=HEADERS, json=payload)
+    if response.status_code == 200:
+        st.success("Data updated successfully!")
+    else:
+        st.error("Failed to update data.")
 
 
 def reset_day_data(filename):
@@ -37,39 +84,6 @@ def reset_month_data(filename):
     players = ["Alex", "Jorge", "Mazu", "Galo", "Priti"]
     data = {game: {player: "" for player in players} for game in games}
     save_data(filename, data)
-
-
-def load_data(filename: str):
-    """
-    Load data from JSON file.
-
-    args:
-        - filename (str): JSON filename
-
-    Returns:
-        - data (dict): JSON data
-    """
-    try:
-        with open(filename, "rb") as file:
-            data = json.load(file)
-        return data
-    except FileNotFoundError:
-        return {}
-    except json.JSONDecodeError:
-        reset_day_data(filename)
-        return data
-
-
-def save_data(filename: str, data: dict):
-    """
-    Save data to JSON file.
-
-    args:
-        - filename (str): JSON filename
-        - data (dict): Dictionary of data to be saved
-    """
-    with open(filename, "w") as file:
-        json.dump(data, file, indent=4)
 
 
 def update_data(filename: str, data: dict, player: str):
@@ -122,8 +136,7 @@ def update_month_results():
     """
     Update monthly results and reset today's results.
     """
-    month_path = "data/month_results.json"
-    data = load_data(month_path)
+    data = load_data(MONTH_PATH)
 
     winners = get_day_winners()
 
@@ -135,7 +148,7 @@ def update_month_results():
             else:
                 data = update_month_score(data, player, game, 1 / n_winners)
 
-    save_data(month_path, data)
+    save_data(MONTH_PATH, data)
     reset_day_data("data/today_results.json")
 
 
@@ -214,8 +227,7 @@ def get_day_winners(players: list[str] = None, check_game: str = None):
     Returns:
         - results (dict): Dictionary with game names as keys and lists of winners as values
     """
-    today_path = "data/today_results.json"
-    today_results = load_data(today_path)
+    today_results = load_data(TODAY_PATH)
 
     results = {
         "Queens 👑": [],
@@ -257,8 +269,7 @@ def update_global_results():
     """
     Update global results and reset months's results.
     """
-    global_path = "data/global_results.json"
-    data = load_data(global_path)
+    data = load_data(GLOBAL_PATH)
 
     winners = get_month_winners()
 
@@ -267,7 +278,7 @@ def update_global_results():
         for player in players:
             data = update_global_score(data, player, game, n_winners)
 
-    save_data(global_path, data)
+    save_data(GLOBAL_PATH, data)
     reset_month_data("data/month_results.json")
 
 
@@ -300,8 +311,7 @@ def get_month_winners():
     Returns:
         - results (dict): Dictionary with game names as keys and lists of winners as values
     """
-    month_path = "data/month_results.json"
-    month_results = load_data(month_path)
+    month_results = load_data(MONTH_PATH)
 
     results = {
         "Queens 👑": [],
@@ -341,8 +351,7 @@ def check_tie_breakers():
     """
     Check for tie breakers and update the global results accordingly.
     """
-    global_path = "data/global_results.json"
-    global_data = load_data(global_path)
+    global_data = load_data(GLOBAL_PATH)
 
     tied_results = {}
     for game in global_data.keys():
@@ -365,4 +374,4 @@ def check_tie_breakers():
                 global_data, winner, game, n_winners
             )
     #### NO QUITA LA ?
-    save_data(global_path, global_data)
+    save_data(GLOBAL_PATH, global_data)
