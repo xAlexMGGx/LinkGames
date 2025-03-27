@@ -4,10 +4,16 @@ import streamlit as st
 import requests
 
 
+# File paths
+TODAY_PATH = "today_results.json"
+MONTH_PATH = "month_results.json"
+GLOBAL_PATH = "global_results.json"
+
+# GitHub Gist IDs (replace with your own)
 GISTS_IDS = {
-    "today_results.json": st.secrets["TODAY_GIST_ID"],
-    "month_results.json": st.secrets["MONTH_GIST_ID"],
-    "global_results.json": st.secrets["GLOBAL_GIST_ID"]
+    TODAY_PATH: st.secrets["TODAY_GIST_ID"],
+    MONTH_PATH: st.secrets["MONTH_GIST_ID"],
+    GLOBAL_PATH: st.secrets["GLOBAL_GIST_ID"],
 }
 GIST_URL = "https://api.github.com/gists/"
 GITHUB_TOKEN = st.secrets["GISTS_API_TOKEN"]
@@ -15,33 +21,37 @@ GITHUB_TOKEN = st.secrets["GISTS_API_TOKEN"]
 # GitHub API endpoints
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
-# File paths
-TODAY_PATH = "today_results.json"
-MONTH_PATH = "month_results.json"
-GLOBAL_PATH = "global_results.json"
 
 def load_data(filename: str):
-    """Fetch JSON data from the GitHub Gist"""
-    url = GIST_URL + f"{GISTS_IDS[filename]}"
+    """
+    Fetch JSON data from the GitHub Gist
+
+    args:
+        - filename (str): JSON filename
+
+    Returns:
+        - dict: JSON data from the GitHub Gist
+    """
+    url = GIST_URL + str(GISTS_IDS[filename])
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
         return json.loads(response.json()["files"][filename]["content"])
     else:
         st.error("Failed to load data.")
         return {}
-    
+
 
 def save_data(filename, new_data):
-    """Update the JSON data in the GitHub Gist"""
+    """
+    Update the JSON data in the GitHub Gist
+
+    args:
+        - filename (str): JSON filename
+        - new_data (dict): New JSON data to be saved
+    """
     updated_content = json.dumps(new_data, indent=4)
-    payload = {
-        "files": {
-            filename: {
-                "content": updated_content
-            }
-        }
-    }
-    url = GIST_URL + f"{GISTS_IDS[filename]}"
+    payload = {"files": {filename: {"content": updated_content}}}
+    url = GIST_URL + str(GISTS_IDS[filename])
     response = requests.patch(url, headers=HEADERS, json=payload)
     if response.status_code == 200:
         st.success("Data updated successfully!")
