@@ -358,6 +358,25 @@ def convert_result(text_result: str):
     return result
 
 
+def convert_table(data: dict):
+    """
+    Return whole table converted using convert_results function.
+
+    args:
+        - data (dict): Data dictionary
+
+    Returns:
+        - table (dict): Table with converted results
+    """
+    table = {}
+    for game, players in data.items():
+        table[game] = {}
+        for player, score in players.items():
+            table[game][player] = convert_result(score)
+    
+    return table
+
+
 def check_tie_breakers():
     """
     Check for tie breakers and update the global results accordingly.
