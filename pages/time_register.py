@@ -22,10 +22,22 @@ player = st.selectbox(
     index=None,
     placeholder="Escoge nombre del jugador",
 )
-queens = st.text_input("Tiempo en Queens (X o X:YY):")
-tango = st.text_input("Tiempo en Tango (X o X:YY):")
-zip = st.text_input("Tiempo en Zip (X o X:YY):")
-cross = st.text_input("Tiempo en Cross (X o X:YY):")
+queens = st.text_input(
+    "Tiempo en Queens (X o X:YY):",
+    placeholder="Si no pones nada, el resultado será 99:99",
+)
+tango = st.text_input(
+    "Tiempo en Tango (X o X:YY):",
+    placeholder="Si no pones nada, el resultado será 99:99",
+)
+zip = st.text_input(
+    "Tiempo en Zip (X o X:YY):",
+    placeholder="Si no pones nada, el resultado será 99:99",
+)
+cross = st.text_input(
+    "Tiempo en Cross (X o X:YY):",
+    placeholder="Si no pones nada, el resultado será 99:99",
+)
 pinpoint = st.checkbox("Adivinó la categoría en Pinpoint?")
 submit = st.button("Registrar")
 
@@ -34,6 +46,9 @@ current_date = datetime.now().astimezone(california_tz).date()
 
 if submit and player:
     times = {"queens": queens, "tango": tango, "zip": zip, "cross": cross}
+    for game, time in times.items():
+        if time == "":
+            times[game] = "99:99"
     parsed_times = {}
     valid = True
 
