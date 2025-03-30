@@ -2,6 +2,7 @@ import json
 import re
 import streamlit as st
 import requests
+import pandas as pd
 
 from pprint import pprint
 
@@ -9,12 +10,14 @@ from pprint import pprint
 TODAY_PATH = "today_results.json"
 MONTH_PATH = "month_results.json"
 GLOBAL_PATH = "global_results.json"
+LAST_DAY_PATH = "last_day_results.json"
 
 # GitHub Gist IDs (replace with your own)
 GISTS_IDS = {
     TODAY_PATH: st.secrets["TODAY_GIST_ID"],
     MONTH_PATH: st.secrets["MONTH_GIST_ID"],
     GLOBAL_PATH: st.secrets["GLOBAL_GIST_ID"],
+    LAST_DAY_PATH: st.secrets["LAST_DAY_GIST_ID"]
 }
 GIST_URL = "https://api.github.com/gists/"
 GITHUB_TOKEN = st.secrets["GISTS_API_TOKEN"]
@@ -147,6 +150,9 @@ def update_month_results():
     """
     Update monthly results and reset today's results.
     """
+    data = load_data(TODAY_PATH)
+    save_data(LAST_DAY_PATH, data)
+
     data = load_data(MONTH_PATH)
 
     winners = get_day_winners()
@@ -228,7 +234,7 @@ def update_month_score(data: dict, player: int, game: str, score: float | int):
     return data
 
 
-def get_day_winners(players: list[str] = None, check_game: str = None):
+def get_day_winners(data: dict = None, players: list[str] = None, check_game: str = None):
     """
     Returns winners for each game
 
@@ -238,7 +244,10 @@ def get_day_winners(players: list[str] = None, check_game: str = None):
     Returns:
         - results (dict): Dictionary with game names as keys and lists of winners as values
     """
-    today_results = load_data(TODAY_PATH)
+    if data is None:
+        today_results = load_data(TODAY_PATH)
+    else:
+        today_results = data
 
     results = {
         "Queens 👑": [],
@@ -405,3 +414,43 @@ def check_tie_breakers():
             )
     #### NO QUITA LA ?
     save_data(GLOBAL_PATH, global_data)
+
+
+def show_last_day_winners():
+    """
+    Show winners of the last day.
+    """
+    data = load_data(LAST_DAY_PATH)
+
+    # Get winners for each game
+    winners = get_day_winners(data=data)
+
+    # Convert the data to a DataFrame
+    data = pd.DataFrame(data)
+
+    # Highlight winners in the DataFrame
+    styled_data = data.style.apply(highlight_winners, axis=0, winners=winners)
+    
+    st.subheader("Ganadores del día anterior")
+    n_rows = len(data["Queens 👑"])
+    if n_rows > 0:
+        st.dataframe(styled_data)
+    else:
+        st.write("No hay registros aún.")
+
+
+def highlight_winners(s, winners: dict):
+    """
+    Highlight winners in the DataFrame.
+
+    args:
+        - s (pd.Series): Series to be highlighted
+
+    Returns:
+        - list: List of styles for each cell
+    """
+    category = s.name  # Get the column name (category)
+    if category not in winners:
+        return [""] * len(s)
+    winners = winners[category]
+    return ["background-color: yellow" if player in winners else "" for player in s.index]

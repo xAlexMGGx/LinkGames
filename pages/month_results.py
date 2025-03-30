@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils import load_data, convert_table
+from utils import load_data, convert_table, show_last_day_winners
 
 # Load dataset
 MONTH_PATH = "month_results.json"
@@ -22,6 +22,8 @@ else:
         data = convert_table(data)
     df = pd.DataFrame(data)
 
-
 # Show results in a table
 st.dataframe(df)
+
+# Load last day's results
+show_last_day_winners()
