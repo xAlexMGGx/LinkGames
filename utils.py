@@ -11,13 +11,15 @@ TODAY_PATH = "today_results.json"
 MONTH_PATH = "month_results.json"
 GLOBAL_PATH = "global_results.json"
 LAST_DAY_PATH = "last_day_results.json"
+LAST_MONTH_PATH = "last_month_results.json"
 
 # GitHub Gist IDs (replace with your own)
 GISTS_IDS = {
     TODAY_PATH: st.secrets["TODAY_GIST_ID"],
     MONTH_PATH: st.secrets["MONTH_GIST_ID"],
     GLOBAL_PATH: st.secrets["GLOBAL_GIST_ID"],
-    LAST_DAY_PATH: st.secrets["LAST_DAY_GIST_ID"]
+    LAST_DAY_PATH: st.secrets["LAST_DAY_GIST_ID"],
+    LAST_MONTH_PATH: st.secrets["LAST_MONTH_GIST_ID"],
 }
 GIST_URL = "https://api.github.com/gists/"
 GITHUB_TOKEN = st.secrets["GISTS_API_TOKEN"]
@@ -324,14 +326,17 @@ def update_global_score(data: dict, player: str, game: str, n_winners: int):
     return data
 
 
-def get_month_winners():
+def get_month_winners(data: dict = None):
     """
     Returns winners for each game in the month
 
     Returns:
         - results (dict): Dictionary with game names as keys and lists of winners as values
     """
-    month_results = load_data(MONTH_PATH)
+    if data is None:
+        month_results = load_data(MONTH_PATH)
+    else:
+        month_results = data
 
     results = {
         "Queens 👑": [],
@@ -454,3 +459,26 @@ def highlight_winners(s, winners: dict):
         return [""] * len(s)
     winners = winners[category]
     return ["background-color: yellow" if player in winners else "" for player in s.index]
+
+
+def show_last_month_winners():
+    """
+    Show winners of the last month.
+    """
+    data = load_data(LAST_MONTH_PATH)
+
+    # Get winners for each game
+    winners = get_month_winners(data)
+
+    # Convert the data to a DataFrame
+    data = pd.DataFrame(data)
+
+    # Highlight winners in the DataFrame
+    styled_data = data.style.apply(highlight_winners, axis=0, winners=winners)
+
+    st.subheader("Ganadores del mes anterior")
+    n_rows = len(data["Queens 👑"])
+    if n_rows > 0:
+        st.dataframe(styled_data)
+    else:
+        st.write("No hay registros aún.")
