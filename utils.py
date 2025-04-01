@@ -291,6 +291,9 @@ def update_global_results():
     """
     Update global results and reset months's results.
     """
+    data = load_data(MONTH_PATH)
+    save_data(LAST_MONTH_PATH, data)
+
     data = load_data(GLOBAL_PATH)
 
     winners = get_month_winners()
