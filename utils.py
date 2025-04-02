@@ -410,16 +410,17 @@ def check_tie_breakers():
                     tied_results[game].append(player)
 
     for game in tied_results.keys():
-        for player in tied_results[game]:
-            global_data[game][player] = global_data[game][player].replace(
-                "?", ""
-            )
         winners = get_day_winners(players=tied_results[game], check_game=game)
         n_winners = len(winners[game])
-        for winner in winners[game]:
-            global_data = update_global_score(
-                global_data, winner, game, n_winners
-            )
+        if n_winners > 0:
+            for player in tied_results[game]:
+                global_data[game][player] = global_data[game][player].replace(
+                    "?", ""
+                )
+            for winner in winners[game]:
+                global_data = update_global_score(
+                    global_data, winner, game, n_winners
+                )
     #### NO QUITA LA ?
     save_data(GLOBAL_PATH, global_data)
 
