@@ -414,7 +414,7 @@ def check_tie_breakers():
             global_data[game][player] = global_data[game][player].replace(
                 "?", ""
             )
-        winners = get_day_winners(tied_results[game], game)
+        winners = get_day_winners(players=tied_results[game], check_game=game)
         n_winners = len(winners[game])
         for winner in winners[game]:
             global_data = update_global_score(
