@@ -155,14 +155,14 @@ def update_month_results():
     data = load_data(TODAY_PATH)
     save_data(LAST_DAY_PATH, data)
 
-    data = load_data(MONTH_PATH)
-
     winners = get_day_winners()
+
+    data = load_data(MONTH_PATH)
 
     for game, players in winners.items():
         n_winners = len(players)
         for player in players:
-            if game == "pinpoint":
+            if game.split(" ")[0].lower() == "pinpoint":
                 data = update_month_score(data, player, game, 1)
             else:
                 data = update_month_score(data, player, game, 1 / n_winners)
