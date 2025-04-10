@@ -7,6 +7,7 @@ from utils import (
     update_month_results,
     update_global_results,
     check_tie_breakers,
+    complete_todays_results
 )
 from pytz import timezone
 
@@ -80,6 +81,7 @@ if len(data["timestamp"]) != 0:
     last_date = list(data["timestamp"].values())[0]
     last_date = datetime.strptime(last_date, "%Y-%m-%d").date()
     if last_date != current_date:
+        complete_todays_results(str(last_date))
         check_tie_breakers()
         update_month_results()
         if current_date.day == 1:

@@ -486,3 +486,27 @@ def show_last_month_winners():
         st.dataframe(styled_data)
     else:
         st.write("No hay registros aún.")
+
+
+def complete_todays_results(timestamp):
+    """
+    Complete today's results in case there are missing players.
+
+    args:
+        - timestamp (str): Timestamp of the current day
+    """
+    all_players = ["Alex", "Jorge", "Mazu", "Galo", "Priti"]
+    today_results = load_data(TODAY_PATH)
+    players = list(today_results["Queens 👑"].keys())
+
+    missing_players = [player for player in all_players if player not in players]
+
+    for player in missing_players:
+        today_results["Queens 👑"][player] = "99:99"
+        today_results["Tango 🔵🟠"][player] = "99:99"
+        today_results["Pinpoint 🟦"][player] = "No"
+        today_results["Cross 🧗"][player] = "99:99"
+        today_results["Zip 🐍"][player] = "99:99"
+        today_results["timestamp"][player] = timestamp
+
+    save_data(TODAY_PATH, today_results)
