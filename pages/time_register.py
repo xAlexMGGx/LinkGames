@@ -90,6 +90,9 @@ if len(data["timestamp"]) != 0:
 
 n_rows = len(data["Queens 👑"])
 if n_rows > 0:
-    st.dataframe(data)
+    if player in data["Queens 👑"]:
+        st.dataframe(data)
+    else:
+        st.write("No hay registros aún para mostrar a este jugador.")
 else:
-    st.write("No hay registros aún.")
+    st.write("No hay registros aún para mostrar a este jugador.")
